@@ -3,6 +3,10 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.filechooser.FileFilter;
 
+import lexico.LexicalError;
+import lexico.Lexico;
+import lexico.Token;
+
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.DataFlavor;
@@ -177,14 +181,13 @@ public class Compilador extends JFrame {
         });
 
         copyButton.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
-                    .put(KeyStroke.getKeyStroke(KeyEvent.VK_C, KeyEvent.CTRL_DOWN_MASK), "copyButton");
+                .put(KeyStroke.getKeyStroke(KeyEvent.VK_C, KeyEvent.CTRL_DOWN_MASK), "copyButton");
         copyButton.getActionMap().put("copyButton", new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 openButton.doClick();
             }
         });
-        
 
         JButton pasteButton = new JButton(new ImageIcon("icons/paste.png"));
         pasteButton.setText("Colar [Ctrl-V]");
@@ -193,7 +196,7 @@ public class Compilador extends JFrame {
         });
 
         pasteButton.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
-                    .put(KeyStroke.getKeyStroke(KeyEvent.VK_V, KeyEvent.CTRL_DOWN_MASK), "pasteButton");
+                .put(KeyStroke.getKeyStroke(KeyEvent.VK_V, KeyEvent.CTRL_DOWN_MASK), "pasteButton");
         pasteButton.getActionMap().put("pasteButton", new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -209,7 +212,7 @@ public class Compilador extends JFrame {
         });
 
         cutButton.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
-                    .put(KeyStroke.getKeyStroke(KeyEvent.VK_C, KeyEvent.CTRL_DOWN_MASK), "cutButton");
+                .put(KeyStroke.getKeyStroke(KeyEvent.VK_C, KeyEvent.CTRL_DOWN_MASK), "cutButton");
         cutButton.getActionMap().put("cutButton", new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -284,8 +287,42 @@ public class Compilador extends JFrame {
         compileButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                // Lógica de compilação aqui (por enquanto nada)
-                msgTextArea.append("Compilação de programas ainda não foi implementada.\n");
+                Lexico lexico = new Lexico();
+                String content = editorTextArea.getText();
+                lexico.setInput(content);
+                try {
+                    Token t = null;
+                    String message = "";
+                    while ((t = lexico.nextToken()) != null) {
+                        message += t.getLexeme() + " | " + t.getId() + " | " + t.getPosition() + "\n";
+
+                        // só escreve o lexema, necessário escrever t.getId (), t.getPosition()
+
+                        // t.getId () - retorna o identificador da classe. Olhar Constants.java e
+                        // adaptar, pois
+                        // deve ser apresentada a classe por extenso
+                        // t.getPosition () - retorna a posição inicial do lexema no editor, necessário
+                        // adaptar
+                        // para mostrar a linha
+
+                        // esse código apresenta os tokens enquanto não ocorrer erro
+                        // no entanto, os tokens devem ser apresentados SÓ se não ocorrer erro,
+                        // necessário adaptar
+                        // para atender o que foi solicitado
+                    }
+                    System.out.println(message);
+                } catch (LexicalError err) { // tratamento de erros
+                    String partialContent = content.substring(0, err.getPosition());
+                    long linha = partialContent.chars().filter(ch -> ch == '\n').count() + 1;
+                    System.out.println(err.getMessage() + " na linha " + linha);
+
+                    // e.getMessage() - retorna a mensagem de erro de SCANNER_ERRO (olhar
+                    // ScannerConstants.java
+                    // e adaptar conforme o enunciado da parte 2)
+                    // e.getPosition() - retorna a posição inicial do erro, tem que adaptar para
+                    // mostrar a
+                    // linha
+                }
             }
         });
         toolBar.add(compileButton);
