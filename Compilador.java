@@ -294,7 +294,7 @@ public class Compilador extends JFrame {
                     Token t = null;
                     String message = "";
                     while ((t = lexico.nextToken()) != null) {
-                        message += t.getLexeme() + " | " + t.getId() + " | " + t.getPosition() + "\n";
+                        message += t.getLexeme() + " | " + t.getId() + " | " + getLine(t.getPosition()) + "\n";
 
                         // só escreve o lexema, necessário escrever t.getId (), t.getPosition()
 
@@ -312,9 +312,8 @@ public class Compilador extends JFrame {
                     }
                     System.out.println(message);
                 } catch (LexicalError err) { // tratamento de erros
-                    String partialContent = content.substring(0, err.getPosition());
-                    long linha = partialContent.chars().filter(ch -> ch == '\n').count() + 1;
-                    System.out.println(err.getMessage() + " na linha " + linha);
+                    System.out.println("linha " + getLine(err.getPosition()) + ": " + err.getMessage());
+                    // System.out.println(err.getMessage() + " na linha " + getLine(err.getPosition()));
 
                     // e.getMessage() - retorna a mensagem de erro de SCANNER_ERRO (olhar
                     // ScannerConstants.java
@@ -383,6 +382,11 @@ public class Compilador extends JFrame {
                 e.printStackTrace();
             }
         }
+    }
+
+    private long getLine(int position) {
+        String partialContent = this.editorTextArea.getText().substring(0, position);
+        return partialContent.chars().filter(ch -> ch == '\n').count() + 1;
     }
 
     public static void main(String[] args) {
