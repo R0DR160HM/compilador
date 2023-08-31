@@ -292,9 +292,9 @@ public class Compilador extends JFrame {
                 lexico.setInput(content);
                 try {
                     Token t = null;
-                    String message = "";
+                    String message = "linha | classe | lexema";
                     while ((t = lexico.nextToken()) != null) {
-                        message += t.getLexeme() + " | " + t.getId() + " | " + getLine(t.getPosition()) + "\n";
+                        message += "\n" + t.getLexeme() + " | " + t.getId() + " | " + getLine(t.getPosition());
 
                         // só escreve o lexema, necessário escrever t.getId (), t.getPosition()
 
@@ -310,9 +310,13 @@ public class Compilador extends JFrame {
                         // necessário adaptar
                         // para atender o que foi solicitado
                     }
+                    message += "\n\nprograma compilado com sucesso";
                     System.out.println(message);
                 } catch (LexicalError err) { // tratamento de erros
-                    System.out.println("linha " + getLine(err.getPosition()) + ": " + err.getMessage());
+                    String wrongDoer = editorTextArea.getText()
+                                                     .substring(err.getPosition())
+                                                     .split("[\\s\\n\\r\\t]")[0];
+                    System.out.println("linha " + getLine(err.getPosition()) + ": " + wrongDoer + " " + err.getMessage());
                     // System.out.println(err.getMessage() + " na linha " + getLine(err.getPosition()));
 
                     // e.getMessage() - retorna a mensagem de erro de SCANNER_ERRO (olhar
