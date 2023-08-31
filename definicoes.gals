@@ -1,0 +1,70 @@
+#Options
+GenerateScanner = true
+GenerateParser = false
+Language = Java
+ScannerName = Lexico
+ScannerCaseSensitive = true
+ScannerTable = Compact
+Input = String
+#RegularDefinitions
+// Maiúscula não repetida
+mai_nao: [a-z][a-z0-9]*([A-Z][a-z0-9]+)*[A-Z]?
+#Tokens
+// Palavra reservada
+palavra_reservada: [a-z][a-z]*
+
+// Identificador
+id: (_i | _f | _b | _s) ({mai_nao} | [A-Z]{mai_nao}? | [A-Z]([0-9a-z][A-Z]?)*)
+
+// Constante int
+const_int: 0 | [1-9][0-9]*
+
+
+// Constante float
+const_float: (0 | [1-9][0-9]*) \. [0-9]([0-9]*[1-9])?
+
+
+// Constante string
+const_str: \" ([^\n\"\\%] | %i | %f | %s | %b)* \"
+
+// Relação das palavras reservadas
+do = palavra_reservada: "do"
+else = palavra_reservada: "else"
+false = palavra_reservada: "false"
+fun = palavra_reservada: "fun"
+if = palavra_reservada: "if"
+in = palavra_reservada: "in"
+main = palavra_reservada: "main"
+out = palavra_reservada: "out"
+repeat = palavra_reservada: "repeat"
+true = palavra_reservada: "true"
+while = palavra_reservada: "while"
+
+
+// Relação dos símbolos especiais
+"&"
+"|"
+"!"
+","
+";"
+"="
+":"
+"("
+")"
+"{"
+"}"
+"=="
+"!="
+"<"
+">"
+"+"
+"-"
+"*"
+"/"
+
+// Ignorar caracteres de tabulação
+:[\s\n\r\t]
+
+// Reconhecer e ignorar comentários
+:"#".*
+:\[[^\[\]]*\]
