@@ -292,9 +292,12 @@ public class Compilador extends JFrame {
                 lexico.setInput(content);
                 try {
                     Token t = null;
-                    String message = "linha | classe | lexema";
+                    String message = "linha\tclasse\tlexema";
                     while ((t = lexico.nextToken()) != null) {
-                        message += "\n" + t.getLexeme() + " | " + t.getId() + " | " + getLine(t.getPosition());
+                        if (t.getId().equals("pr_invalida")) {
+                            throw new LexicalError("{0} palavra reservada inválida", t.getPosition());
+                        }
+                        message += "\n" + getLine(t.getPosition()) + " \t" + t.getId() + "\t" + t.getLexeme();
 
                         // só escreve o lexema, necessário escrever t.getId (), t.getPosition()
 
@@ -311,12 +314,13 @@ public class Compilador extends JFrame {
                         // para atender o que foi solicitado
                     }
                     message += "\n\nprograma compilado com sucesso";
-                    System.out.println(message);
+                    msgTextArea.setText(message);
+                    // System.out.println(message);
                 } catch (LexicalError err) { // tratamento de erros
                     String wrongDoer = editorTextArea.getText()
                                                      .substring(err.getPosition())
                                                      .split("[\\s\\n\\r\\t]")[0];
-                    System.out.println("linha " + getLine(err.getPosition()) + ": " + wrongDoer + " " + err.getMessage());
+                    msgTextArea.setText("linha " + getLine(err.getPosition()) + ": " + err.getMessage().replace("{0}", wrongDoer));
                     // System.out.println(err.getMessage() + " na linha " + getLine(err.getPosition()));
 
                     // e.getMessage() - retorna a mensagem de erro de SCANNER_ERRO (olhar
