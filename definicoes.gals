@@ -1,11 +1,14 @@
 #Options
 GenerateScanner = true
-GenerateParser = false
+GenerateParser = true
 Language = Java
 ScannerName = Lexico
+ParserName = Sintatico
+SemanticName = Semantico
 ScannerCaseSensitive = true
 ScannerTable = Compact
-Input = String
+Input = Stream
+Parser = SLR
 #RegularDefinitions
 // Maiúscula não repetida
 mai_nao: [a-z][a-z0-9]*([A-Z][a-z0-9]+)*[A-Z]?
@@ -68,3 +71,81 @@ while = palavra_reservada: "while"
 // Reconhecer e ignorar comentários
 :"#".*
 :\[[^\[\]]*\]
+#NonTerminals
+<app>
+
+<lista_instrucoes>
+	<__lista_instrucoes>
+
+<instrucao>
+
+<dec_const>
+
+<dec_var>
+
+<lista_ids>
+	<__lista_ids>
+
+<valor>
+
+<expressao>
+
+<comando>
+<cmd_atribuicao>
+<cmd_input>
+<cmd_output>
+<cmd_selecao>
+	<__cmd_else>
+<cmd_loop>
+
+<lista_input>
+	<__lista_input_1>
+	<__lista_input_2>
+
+<lista_expressoes>
+	<__lista_expressoes>
+
+<lista_comandos>
+	<__lista_comandos>
+#Grammar
+<app> ::= fun main "{" <lista_instrucoes> "}";
+
+<lista_instrucoes> ::= <instrucao> ";" <__lista_instrucoes>;
+	<__lista_instrucoes> ::= <lista_instrucoes> | î;
+
+<instrucao> ::= <dec_const> | <dec_var> | <comando>;
+
+<dec_const> ::= <lista_ids> ":" <valor>;
+
+<lista_ids> ::= id <__lista_ids>;
+	<__lista_ids> ::= î | "," <lista_ids>;
+
+<valor> ::= const_int | const_float | const_str | true | false;
+
+<dec_var> ::= <lista_ids>;
+
+
+<comando> ::= <cmd_atribuicao> | <cmd_input> | <cmd_output> | <cmd_selecao> | <cmd_loop>;
+
+<cmd_atribuicao> ::= <lista_ids> "=" <expressao>;
+
+<cmd_input> ::= in "(" <lista_input> ")";
+
+<cmd_output> ::= out "(" <lista_expressoes> ")";
+
+<cmd_selecao> ::= if "(" <expressao> ")" "{" <lista_comandos> "}" <__cmd_else>;
+	<__cmd_else> ::= else "{" <lista_comandos> "}" | î;
+
+<cmd_loop> ::= while "(" <expressao> ")" do "{" <lista_comandos> "}"
+| repeat "{" <lista_comandos> "}" while "(" <expressao> ")";
+
+
+<lista_input> ::= const_str "," <__lista_input_1> | <__lista_input_1>;
+	<__lista_input_1> ::= <lista_ids> <__lista_input_2>;
+	<__lista_input_2> ::= ";" <lista_input> | î;
+
+<lista_expressoes> ::= <expressao> <__lista_expressoes>;
+	<__lista_expressoes> ::= "," <lista_expressoes> | î;
+
+<lista_comandos> ::= <comando> ";" <__lista_comandos>;
+	<__lista_comandos> ::= <lista_comandos> | î;
