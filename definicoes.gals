@@ -8,11 +8,13 @@ SemanticName = Semantico
 ScannerCaseSensitive = true
 ScannerTable = Compact
 Input = Stream
-Parser = SLR
+Parser = LL
 #RegularDefinitions
-// Maiúscula não repetida
+// Maiï¿½scula nï¿½o repetida
 mai_nao: [a-z][a-z0-9]*([A-Z][a-z0-9]+)*[A-Z]?
 #Tokens
+// EQUIPE: Gabriel Eduardo Pereira; Lucas Jansen Gorges; Rodrigo Heinzen de Moraes
+
 // Palavra reservada
 palavra_reservada: [a-z][a-z]*
 
@@ -30,7 +32,7 @@ const_float: (0 | [1-9][0-9]*) \. [0-9]([0-9]*[1-9])?
 // Constante string
 const_str: \" ([^\n\"\\%] | %i | %f | %s | %b)* \"
 
-// Relação das palavras reservadas
+// Relaï¿½ï¿½o das palavras reservadas
 do = palavra_reservada: "do"
 else = palavra_reservada: "else"
 false = palavra_reservada: "false"
@@ -44,7 +46,7 @@ true = palavra_reservada: "true"
 while = palavra_reservada: "while"
 
 
-// Relação dos símbolos especiais
+// Relaï¿½ï¿½o dos sï¿½mbolos especiais
 "&"
 "|"
 "!"
@@ -65,10 +67,10 @@ while = palavra_reservada: "while"
 "*"
 "/"
 
-// Ignorar caracteres de tabulação
+// Ignorar caracteres de tabulaï¿½ï¿½o
 :[\s\n\r\t]
 
-// Reconhecer e ignorar comentários
+// Reconhecer e ignorar comentï¿½rios
 :"#".*
 :\[[^\[\]]*\]
 #NonTerminals
@@ -78,17 +80,12 @@ while = palavra_reservada: "while"
 	<__lista_instrucoes>
 
 <instrucao>
-
-<dec_const>
-
-<dec_var>
+	<__instrucao>
 
 <lista_ids>
 	<__lista_ids>
 
 <valor>
-
-<expressao>
 
 <comando>
 <cmd_atribuicao>
@@ -107,27 +104,38 @@ while = palavra_reservada: "while"
 
 <lista_comandos>
 	<__lista_comandos>
+
+
+
+
+<expressao>
+<expressao_>
+<elemento>
+<relacional>
+<relacional_>
+<operador_relacional>
+<aritmetica>
+<aritmetica_>
+<termo>
+<termo_>
+<fator>
 #Grammar
 <app> ::= fun main "{" <lista_instrucoes> "}";
 
 <lista_instrucoes> ::= <instrucao> ";" <__lista_instrucoes>;
 	<__lista_instrucoes> ::= <lista_instrucoes> | î;
 
-<instrucao> ::= <dec_const> | <dec_var> | <comando>;
-
-<dec_const> ::= <lista_ids> ":" <valor>;
+<instrucao> ::= <lista_ids> <__instrucao>;
+	<__instrucao> ::= ":" <valor> | <comando> | î;
 
 <lista_ids> ::= id <__lista_ids>;
 	<__lista_ids> ::= î | "," <lista_ids>;
 
 <valor> ::= const_int | const_float | const_str | true | false;
 
-<dec_var> ::= <lista_ids>;
-
-
 <comando> ::= <cmd_atribuicao> | <cmd_input> | <cmd_output> | <cmd_selecao> | <cmd_loop>;
 
-<cmd_atribuicao> ::= <lista_ids> "=" <expressao>;
+<cmd_atribuicao> ::= "=" <expressao>;
 
 <cmd_input> ::= in "(" <lista_input> ")";
 
@@ -149,3 +157,29 @@ while = palavra_reservada: "while"
 
 <lista_comandos> ::= <comando> ";" <__lista_comandos>;
 	<__lista_comandos> ::= <lista_comandos> | î;
+
+
+
+
+<expressao>			::= <elemento> <expressao_>  ;
+<expressao_>			::= î | "&" <elemento> <expressao_> | "|" <elemento> <expressao_> ;
+<elemento>			::= <relacional> | true | false | "!" <elemento> ;
+
+<relacional>			::= <aritmetica> <relacional_> ;
+<relacional_>			::= î | <operador_relacional> <aritmetica> ;
+<operador_relacional>	::= "==" | "!=" | "<" | ">" ;
+
+<aritmetica>			::= <termo> <aritmetica_>  ;
+<aritmetica_>			::= î | "+" <termo> <aritmetica_> | "-" <termo> <aritmetica_> ;
+
+<termo>			::= <fator> <termo_> ;
+<termo_>			::= î | "*" <fator> <termo_> | "/" <fator> <termo_> ;
+
+<fator>			::= id | 
+			    	    const_int | 
+		   	    	    const_float | 
+			    	    const_str | 
+		   	    	    "(" <expressao> ")" |
+	    	  	    	    "+" <fator> | 
+	    		    	    "-" <fator> ;
+
