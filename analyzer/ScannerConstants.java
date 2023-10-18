@@ -1,4 +1,4 @@
-package lexico;
+package analyzer;
 
 public interface ScannerConstants
 {

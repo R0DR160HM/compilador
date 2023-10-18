@@ -1,4 +1,4 @@
-package lexico;
+package analyzer;
 
 public class LexicalError extends AnalysisError {
     public LexicalError(String msg, int position) {

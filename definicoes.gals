@@ -7,7 +7,7 @@ ParserName = Sintatico
 SemanticName = Semantico
 ScannerCaseSensitive = true
 ScannerTable = Compact
-Input = Stream
+Input = String
 Parser = LL
 #RegularDefinitions
 // Maiï¿½scula nï¿½o repetida
@@ -125,8 +125,8 @@ while = palavra_reservada: "while"
 <lista_instrucoes> ::= <instrucao> ";" <__lista_instrucoes>;
 	<__lista_instrucoes> ::= <lista_instrucoes> | î;
 
-<instrucao> ::= <lista_ids> <__instrucao>;
-	<__instrucao> ::= ":" <valor> | <comando> | î;
+<instrucao> ::= <lista_ids> <__instrucao> | <cmd_input> | <cmd_output> | <cmd_selecao> | <cmd_loop>;
+	<__instrucao> ::= ":" <valor> | î | "=" <expressao>;
 
 <lista_ids> ::= id <__lista_ids>;
 	<__lista_ids> ::= î | "," <lista_ids>;
@@ -135,7 +135,7 @@ while = palavra_reservada: "while"
 
 <comando> ::= <cmd_atribuicao> | <cmd_input> | <cmd_output> | <cmd_selecao> | <cmd_loop>;
 
-<cmd_atribuicao> ::= "=" <expressao>;
+<cmd_atribuicao> ::= <lista_ids> "=" <expressao>;
 
 <cmd_input> ::= in "(" <lista_input> ")";
 
