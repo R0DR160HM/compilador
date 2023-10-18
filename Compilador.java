@@ -5,6 +5,10 @@ import javax.swing.filechooser.FileFilter;
 
 import analyzer.LexicalError;
 import analyzer.Lexico;
+import analyzer.SemanticError;
+import analyzer.Semantico;
+import analyzer.Sintatico;
+import analyzer.SyntaticError;
 import analyzer.Token;
 
 import java.awt.*;
@@ -287,48 +291,43 @@ public class Compilador extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 Lexico lexico = new Lexico();
+                Sintatico sintatico = new Sintatico();
+                Semantico semantico = new Semantico();
                 String content = editorTextArea.getText();
                 lexico.setInput(content);
+
                 try {
-                    Token t = null;
-                    String message = "linha\tclasse\tlexema";
-                    while ((t = lexico.nextToken()) != null) {
-                        if (t.getIdDescription().equals("pr_invalida")) {
-                            throw new LexicalError("{0} palavra reservada inválida", t.getPosition());
-                        }
-                        message += "\n" + getLine(t.getPosition()) + " \t" + t.getIdDescription() + "\t" + t.getLexeme();
-
-                        // só escreve o lexema, necessário escrever t.getId (), t.getPosition()
-
-                        // t.getId () - retorna o identificador da classe. Olhar Constants.java e
-                        // adaptar, pois
-                        // deve ser apresentada a classe por extenso
-                        // t.getPosition () - retorna a posição inicial do lexema no editor, necessário
-                        // adaptar
-                        // para mostrar a linha
-
-                        // esse código apresenta os tokens enquanto não ocorrer erro
-                        // no entanto, os tokens devem ser apresentados SÓ se não ocorrer erro,
-                        // necessário adaptar
-                        // para atender o que foi solicitado
-                    }
-                    message += "\n\nprograma compilado com sucesso";
-                    msgTextArea.setText(message);
-                    // System.out.println(message);
-                } catch (LexicalError err) { // tratamento de erros
+                    sintatico.parse(lexico, semantico);
+                    msgTextArea.setText("programa compilado com sucesso");
+                } catch (LexicalError err) {
                     String wrongDoer = editorTextArea.getText()
-                                                     .substring(err.getPosition())
-                                                     .split("[\\s\\n\\r\\t]")[0];
-                    msgTextArea.setText("linha " + getLine(err.getPosition()) + ": " + err.getMessage().replace("{0}", wrongDoer));
-                    // System.out.println(err.getMessage() + " na linha " + getLine(err.getPosition()));
+                        .substring(err.getPosition())
+                        .split("[\\s\\n\\r\\t]")[0];
+                    msgTextArea.setText("Erro na linha " + getLine(err.getPosition()) + " - " + err.getMessage().replace("{0}", wrongDoer));
+                } catch (SyntaticError err) {
+                    msgTextArea.setText("Erro na linha " + getLine(err.getPosition()) + " - encontrado " + sintatico.getToken().getLexeme() + "\n\t" + err.getMessage());
+                } catch (SemanticError err) {
 
-                    // e.getMessage() - retorna a mensagem de erro de SCANNER_ERRO (olhar
-                    // ScannerConstants.java
-                    // e adaptar conforme o enunciado da parte 2)
-                    // e.getPosition() - retorna a posição inicial do erro, tem que adaptar para
-                    // mostrar a
-                    // linha
                 }
+
+                // try {
+                //     Token t = null;
+                //     String message = "linha\tclasse\tlexema";
+                //     while ((t = lexico.nextToken()) != null) {
+                //         if (t.getIdDescription().equals("pr_invalida")) {
+                //             throw new LexicalError("{0} palavra reservada inválida", t.getPosition());
+                //         }
+                //         message += "\n" + getLine(t.getPosition()) + " \t" + t.getIdDescription() + "\t" + t.getLexeme();
+                //     }
+                //     message += "\n\nprograma compilado com sucesso";
+                //     msgTextArea.setText(message);
+                //     // System.out.println(message);
+                // } catch (LexicalError err) { // tratamento de erros
+                //     String wrongDoer = editorTextArea.getText()
+                //                                      .substring(err.getPosition())
+                //                                      .split("[\\s\\n\\r\\t]")[0];
+                //     msgTextArea.setText("linha " + getLine(err.getPosition()) + ": " + err.getMessage().replace("{0}", wrongDoer));
+                // }
             }
         });
         toolBar.add(compileButton);
