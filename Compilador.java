@@ -293,10 +293,10 @@ public class Compilador extends JFrame {
                     Token t = null;
                     String message = "linha\tclasse\tlexema";
                     while ((t = lexico.nextToken()) != null) {
-                        if (t.getId().equals("pr_invalida")) {
+                        if (t.getIdDescription().equals("pr_invalida")) {
                             throw new LexicalError("{0} palavra reservada inválida", t.getPosition());
                         }
-                        message += "\n" + getLine(t.getPosition()) + " \t" + t.getId() + "\t" + t.getLexeme();
+                        message += "\n" + getLine(t.getPosition()) + " \t" + t.getIdDescription() + "\t" + t.getLexeme();
 
                         // só escreve o lexema, necessário escrever t.getId (), t.getPosition()
 
