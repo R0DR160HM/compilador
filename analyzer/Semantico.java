@@ -67,6 +67,7 @@ public class Semantico implements Constants {
             default:
                 System.err.println("Operação " + action + " não identificada!");
         }
+        
     }
 
     // Cabeçalho
