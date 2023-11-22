@@ -126,30 +126,30 @@ while = palavra_reservada: "while"
 	<__lista_instrucoes> ::= <lista_instrucoes> | î;
 
 <instrucao> ::= <lista_ids> <__instrucao> | <cmd_input> | <cmd_output> | <cmd_selecao> | <cmd_loop>;
-	<__instrucao> ::= ":" <valor> | î | "=" <expressao>;
+	<__instrucao> ::= ":" <valor> #126 | #127 î | "=" <expressao> #128 ;
 
-<lista_ids> ::= id <__lista_ids>;
+<lista_ids> ::= id #125 <__lista_ids>;
 	<__lista_ids> ::= î | "," <lista_ids>;
 
 <valor> ::= const_int | const_float | const_str | true | false;
 
 <comando> ::= <cmd_atribuicao> | <cmd_input> | <cmd_output> | <cmd_selecao> | <cmd_loop>;
 
-<cmd_atribuicao> ::= <lista_ids> "=" <expressao>;
+<cmd_atribuicao> ::= <lista_ids> "=" <expressao> #128 ;
 
 <cmd_input> ::= in "(" <lista_input> ")";
 
 <cmd_output> ::= out "(" <lista_expressoes> ")";
 
-<cmd_selecao> ::= if "(" <expressao> ")" "{" <lista_comandos> "}" <__cmd_else>;
-	<__cmd_else> ::= else "{" <lista_comandos> "}" | î;
+<cmd_selecao> ::= if "(" <expressao> ")" #118 "{" <lista_comandos> "}" <__cmd_else> #119 ;
+	<__cmd_else> ::= #120 else "{" <lista_comandos> "}" | î;
 
-<cmd_loop> ::= while "(" <expressao> ")" do "{" <lista_comandos> "}"
-| repeat "{" <lista_comandos> "}" while "(" <expressao> ")";
+<cmd_loop> ::= #121 while "(" <expressao> ")" #122 do "{" <lista_comandos> "}" #123
+| #121 repeat "{" <lista_comandos> "}" while "(" <expressao> ")" #124 ;
 
 
-<lista_input> ::= const_str "," <__lista_input_1> | <__lista_input_1>;
-	<__lista_input_1> ::= <lista_ids> <__lista_input_2>;
+<lista_input> ::= const_str #130 "," <__lista_input_1> | <__lista_input_1>;
+	<__lista_input_1> ::= <lista_ids> #129 <__lista_input_2>;
 	<__lista_input_2> ::= ";" <lista_input> | î;
 
 <lista_expressoes> ::= <expressao> #102 <__lista_expressoes>;
