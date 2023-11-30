@@ -1,5 +1,10 @@
 package analyzer;
 
+import java.util.Dictionary;
+import java.util.HashSet;
+import java.util.Hashtable;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Stack;
 
 public class Semantico implements Constants {
@@ -7,6 +12,10 @@ public class Semantico implements Constants {
     private String operadorRelacional = "";
     private String codigoObjeto = "";
     private Stack<String> pilhaTipos = new Stack<>();
+    private Stack<String> pilhaRotulos = new Stack<>();
+    private List<String> listaIdentificadores = new LinkedList<String>();
+
+    private Hashtable<String, String> tabelaSimbolos = new Hashtable<>();
 
     public void executeAction(int action, Token token) throws SemanticError {
         switch (action) {
@@ -64,6 +73,21 @@ public class Semantico implements Constants {
             case 117:
                 acao117();
                 break;
+            case 118:
+                acao118();
+                break;
+            case 119:
+                acao119();
+                break;
+            case 120:
+                acao120();
+                break;
+
+            case 125:
+                acao125(token.getLexeme());
+                break;
+            case 126:
+                acao126();
             default:
                 System.err.println("Operação " + action + " não identificada!");
         }
@@ -111,13 +135,13 @@ public class Semantico implements Constants {
     // true
     private void acao105() {
         this.pilhaTipos.push("bool");
-        this.append("ldc.r4.1");
+        this.append("ldc.i4.1");
     }
 
     // false
     private void acao106() {
         this.pilhaTipos.push("bool");
-        this.append("ldc.r4.0");
+        this.append("ldc.i4.0");
     }
 
     // not
@@ -129,13 +153,13 @@ public class Semantico implements Constants {
     // Salva operador relacional
     private void acao108(String token) {
         this.operadorRelacional = token;
+    }
+    
+    // Realizar comparação
+    private void acao109() {
         pilhaTipos.pop();
         pilhaTipos.pop();
         this.pilhaTipos.push("bool");
-    }
-
-    // Realizar comparação
-    private void acao109() {
         switch (this.operadorRelacional) {
             case "==":
                 this.append("ceq");
@@ -209,8 +233,75 @@ public class Semantico implements Constants {
         this.append("mul");
     }
 
+    // if
+    private void acao118() throws SemanticError {
+        String tipo = pilhaTipos.pop();
+        if (tipo.equals("bool")) {
+            String rotulo = "novo_rotulo1";
+            this.append("brfalse novo_rotulo1");
+            pilhaRotulos.push(rotulo);
+        } else {
+            throw new SemanticError("expressão incompatível em comando de seleção");
+        }
+    }
+
+    private void acao119() {
+        this.desempilharRotulo();
+    }
+
+    private void acao120() {
+        String rotulo = "novo_rotulo2";
+        this.append("br novo_rotulo2");
+        this.desempilharRotulo();
+        pilhaRotulos.push(rotulo);
+    }
+
+    private void acao125(String id) {
+        this.listaIdentificadores.add(id);
+    }
+
+    private void acao126() throws SemanticError {
+        for (String id : listaIdentificadores) {
+            if (this.tabelaSimbolos.contains(id)) {
+                throw new SemanticError(id + " já declarado");
+            } else {
+                this.tabelaSimbolos.add(id);
+            }
+        }
+        this.listaIdentificadores = new LinkedList<>();
+    }
+
+    private void acao127() throws SemanticError {
+        for (String id : listaIdentificadores) {
+            if (this.tabelaSimbolos.contains(id)) {
+                throw new SemanticError(id + " já declarado");
+            } else {
+                this.tabelaSimbolos.add(id);
+                String tipo = this.getTipo(id);
+            }
+        }
+        this.listaIdentificadores = new LinkedList<>();
+    }
+
     private void append(String value) {
         this.codigoObjeto += "\n" + value;
+    }
+
+    private String getTipo(String id) {
+        if (id.startsWith("_i")) {
+            return "int64";
+        } else if (id.startsWith("_f")) {
+            return "float64";
+        } else if (id.startsWith("_s")) {
+            return "string";
+        } else if (id.startsWith("_b")) {
+            return "bool";
+        }
+        return "";
+    }
+
+    private void desempilharRotulo() {
+        this.append(this.pilhaRotulos.pop() + ":");
     }
 
     private void aritmetica() {
