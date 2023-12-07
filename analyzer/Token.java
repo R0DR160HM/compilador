@@ -13,8 +13,7 @@ public class Token
         this.position = position;
     }
 
-    public final String getId()
-    {
+    public final String getIdDescription() {
         switch (id) {
             case 2: return "pr_invalida";
             case 3: return "identificador";
@@ -53,6 +52,12 @@ public class Token
             case 36: return "símbolo especial";
             default: return "";
         }
+
+    }
+
+    public final int getId()
+    {
+        return id;
     }
 
     public final String getLexeme()

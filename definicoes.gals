@@ -120,66 +120,66 @@ while = palavra_reservada: "while"
 <termo_>
 <fator>
 #Grammar
-<app> ::= fun main "{" <lista_instrucoes> "}";
+<app> ::= #100 fun main "{" <lista_instrucoes> "}" #101 ;
 
 <lista_instrucoes> ::= <instrucao> ";" <__lista_instrucoes>;
-	<__lista_instrucoes> ::= <lista_instrucoes> | î;
+	<__lista_instrucoes> ::= <lista_instrucoes> | Ã®;
 
 <instrucao> ::= <lista_ids> <__instrucao> | <cmd_input> | <cmd_output> | <cmd_selecao> | <cmd_loop>;
-	<__instrucao> ::= ":" <valor> | î | "=" <expressao>;
+	<__instrucao> ::= ":" <valor> #126 | #127 Ã® | "=" <expressao> #128 ;
 
-<lista_ids> ::= id <__lista_ids>;
-	<__lista_ids> ::= î | "," <lista_ids>;
+<lista_ids> ::= id #125 <__lista_ids>;
+	<__lista_ids> ::= Ã® | "," <lista_ids>;
 
 <valor> ::= const_int | const_float | const_str | true | false;
 
 <comando> ::= <cmd_atribuicao> | <cmd_input> | <cmd_output> | <cmd_selecao> | <cmd_loop>;
 
-<cmd_atribuicao> ::= <lista_ids> "=" <expressao>;
+<cmd_atribuicao> ::= <lista_ids> "=" <expressao> #128 ;
 
 <cmd_input> ::= in "(" <lista_input> ")";
 
 <cmd_output> ::= out "(" <lista_expressoes> ")";
 
-<cmd_selecao> ::= if "(" <expressao> ")" "{" <lista_comandos> "}" <__cmd_else>;
-	<__cmd_else> ::= else "{" <lista_comandos> "}" | î;
+<cmd_selecao> ::= if "(" <expressao> ")" #118 "{" <lista_comandos> "}" <__cmd_else> #119 ;
+	<__cmd_else> ::= #120 else "{" <lista_comandos> "}" | Ã®;
 
-<cmd_loop> ::= while "(" <expressao> ")" do "{" <lista_comandos> "}"
-| repeat "{" <lista_comandos> "}" while "(" <expressao> ")";
+<cmd_loop> ::= #121 while "(" <expressao> ")" #122 do "{" <lista_comandos> "}" #123
+| #121 repeat "{" <lista_comandos> "}" while "(" <expressao> ")" #124 ;
 
 
-<lista_input> ::= const_str "," <__lista_input_1> | <__lista_input_1>;
-	<__lista_input_1> ::= <lista_ids> <__lista_input_2>;
-	<__lista_input_2> ::= ";" <lista_input> | î;
+<lista_input> ::= const_str #130 "," <__lista_input_1> | <__lista_input_1>;
+	<__lista_input_1> ::= <lista_ids> #129 <__lista_input_2>;
+	<__lista_input_2> ::= ";" <lista_input> | Ã®;
 
-<lista_expressoes> ::= <expressao> <__lista_expressoes>;
-	<__lista_expressoes> ::= "," <lista_expressoes> | î;
+<lista_expressoes> ::= <expressao> #102 <__lista_expressoes>;
+	<__lista_expressoes> ::= "," <lista_expressoes> | Ã®;
 
 <lista_comandos> ::= <comando> ";" <__lista_comandos>;
-	<__lista_comandos> ::= <lista_comandos> | î;
+	<__lista_comandos> ::= <lista_comandos> | Ã®;
 
 
 
 
 <expressao>			::= <elemento> <expressao_>  ;
-<expressao_>			::= î | "&" <elemento> <expressao_> | "|" <elemento> <expressao_> ;
-<elemento>			::= <relacional> | true | false | "!" <elemento> ;
+<expressao_>			::= Ã® | "&" <elemento> #103 <expressao_> | "|" <elemento> #104 <expressao_> ;
+<elemento>			::= <relacional> | true #105 | false #106 | "!" <elemento> #107 ;
 
 <relacional>			::= <aritmetica> <relacional_> ;
-<relacional_>			::= î | <operador_relacional> <aritmetica> ;
+<relacional_>			::= Ã® | <operador_relacional> #108 <aritmetica> #109 ;
 <operador_relacional>	::= "==" | "!=" | "<" | ">" ;
 
 <aritmetica>			::= <termo> <aritmetica_>  ;
-<aritmetica_>			::= î | "+" <termo> <aritmetica_> | "-" <termo> <aritmetica_> ;
+<aritmetica_>			::= Ã® | "+" <termo> #110 <aritmetica_> | "-" <termo> #111 <aritmetica_> ;
 
 <termo>			::= <fator> <termo_> ;
-<termo_>			::= î | "*" <fator> <termo_> | "/" <fator> <termo_> ;
+<termo_>			::= Ã® | "*" <fator> #112 <termo_> | "/" <fator> #113 <termo_> ;
 
-<fator>			::= id | 
-			    	    const_int | 
-		   	    	    const_float | 
-			    	    const_str | 
+<fator>			::= id #131 | 
+			    	    const_int #114 | 
+		   	    	    const_float #115 | 
+			    	    const_str #116 | 
 		   	    	    "(" <expressao> ")" |
 	    	  	    	    "+" <fator> | 
-	    		    	    "-" <fator> ;
+	    		    	    "-" <fator> #117 ;
 
