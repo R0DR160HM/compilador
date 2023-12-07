@@ -137,9 +137,11 @@ public class Compilador extends JFrame {
                         FileWriter writer = new FileWriter(selectedFile);
                         writer.write(editorTextArea.getText());
                         writer.close();
+                        arqPath = selectedFile.getPath();
+                        File renamedFile = new File(arqPath + ".txt");
+                        selectedFile.renameTo(renamedFile);
                         System.out.println("Arquivo salvo com sucesso!");
                         arquivoNovo = false;
-                        arqPath = selectedFile.getPath();
                         statusLabel.setText("Editando: " + selectedFile.getPath());
                         msgTextArea.append("Arquivo salvo.\n");
                     } catch (IOException exe) {
@@ -298,35 +300,40 @@ public class Compilador extends JFrame {
 
                 try {
                     sintatico.parse(lexico, semantico);
+                    saveIlasm(semantico.getCodigoObjeto());
                     msgTextArea.setText("programa compilado com sucesso");
                 } catch (LexicalError err) {
                     String wrongDoer = editorTextArea.getText()
-                        .substring(err.getPosition())
-                        .split("[\\s\\n\\r\\t]")[0];
-                    msgTextArea.setText("Erro na linha " + getLine(err.getPosition()) + " - " + err.getMessage().replace("{0}", wrongDoer));
+                            .substring(err.getPosition())
+                            .split("[\\s\\n\\r\\t]")[0];
+                    msgTextArea.setText("Erro na linha " + getLine(err.getPosition()) + " - "
+                            + err.getMessage().replace("{0}", wrongDoer));
                 } catch (SyntaticError err) {
-                    msgTextArea.setText("Erro na linha " + getLine(err.getPosition()) + " - encontrado " + sintatico.getToken().getLexeme() + "\n\t" + err.getMessage());
+                    msgTextArea.setText("Erro na linha " + getLine(err.getPosition()) + " - encontrado "
+                            + sintatico.getToken().getLexeme() + "\n\t" + err.getMessage());
                 } catch (SemanticError err) {
-
+                    msgTextArea.setText("Erro na linha " + getLine(err.getPosition()) + " - " + err.getMessage());
                 }
 
                 // try {
-                //     Token t = null;
-                //     String message = "linha\tclasse\tlexema";
-                //     while ((t = lexico.nextToken()) != null) {
-                //         if (t.getIdDescription().equals("pr_invalida")) {
-                //             throw new LexicalError("{0} palavra reservada inválida", t.getPosition());
-                //         }
-                //         message += "\n" + getLine(t.getPosition()) + " \t" + t.getIdDescription() + "\t" + t.getLexeme();
-                //     }
-                //     message += "\n\nprograma compilado com sucesso";
-                //     msgTextArea.setText(message);
-                //     // System.out.println(message);
+                // Token t = null;
+                // String message = "linha\tclasse\tlexema";
+                // while ((t = lexico.nextToken()) != null) {
+                // if (t.getIdDescription().equals("pr_invalida")) {
+                // throw new LexicalError("{0} palavra reservada inválida", t.getPosition());
+                // }
+                // message += "\n" + getLine(t.getPosition()) + " \t" + t.getIdDescription() +
+                // "\t" + t.getLexeme();
+                // }
+                // message += "\n\nprograma compilado com sucesso";
+                // msgTextArea.setText(message);
+                // // System.out.println(message);
                 // } catch (LexicalError err) { // tratamento de erros
-                //     String wrongDoer = editorTextArea.getText()
-                //                                      .substring(err.getPosition())
-                //                                      .split("[\\s\\n\\r\\t]")[0];
-                //     msgTextArea.setText("linha " + getLine(err.getPosition()) + ": " + err.getMessage().replace("{0}", wrongDoer));
+                // String wrongDoer = editorTextArea.getText()
+                // .substring(err.getPosition())
+                // .split("[\\s\\n\\r\\t]")[0];
+                // msgTextArea.setText("linha " + getLine(err.getPosition()) + ": " +
+                // err.getMessage().replace("{0}", wrongDoer));
                 // }
             }
         });
@@ -393,6 +400,20 @@ public class Compilador extends JFrame {
     private long getLine(int position) {
         String partialContent = this.editorTextArea.getText().substring(0, position);
         return partialContent.chars().filter(ch -> ch == '\n').count() + 1;
+    }
+
+    private void saveIlasm(String code) {
+        File file = new File(arqPath.replace("txt", "il"));
+        try {
+            FileWriter writer = new FileWriter(file);
+            writer.write(code);
+            writer.close();
+        } catch (Exception e) {
+            System.err.println(e.getMessage());
+        }
+        // arqPath = selectedFile.getPath();
+        // File renamedFile = new File(arqPath + ".txt");
+        // selectedFile.renameTo(renamedFile);
     }
 
     public static void main(String[] args) {

@@ -121,6 +121,10 @@ public class Semantico implements Constants {
         
     }
 
+    public String getCodigoObjeto() {
+        return codigoObjeto;
+    }
+
     // Cabeçalho
     private void acao100() {
         this.append(".assembly extern mscorlib {}");
@@ -209,24 +213,36 @@ public class Semantico implements Constants {
     private void acao110() {
         this.aritmetica();
         this.append("add");
+        if (this.pilhaTipos.peek().equals("int64")) {
+            this.append("conv.r8");
+        }
     }
 
     // - (subtract)
     private void acao111() {
         this.aritmetica();
         this.append("sub");
+        if (this.pilhaTipos.peek().equals("int64")) {
+            this.append("conv.r8");
+        }
     }
 
     // * (multiply)
     private void acao112() {
         this.aritmetica();
         this.append("mul");
+        if (this.pilhaTipos.peek().equals("int64")) {
+            this.append("conv.r8");
+        }
     }
 
     // / (divide)
     private void acao113() {
         this.aritmetica();
         this.append("div");
+        if (this.pilhaTipos.peek().equals("int64")) {
+            this.append("conv.r8");
+        }
     }
 
     // constante_int
@@ -323,7 +339,7 @@ public class Semantico implements Constants {
 
     private void acao126(Token token) throws SemanticError {
         for (String id : listaIdentificadores) {
-            if (this.tabelaSimbolos.contains(id)) {
+            if (this.tabelaSimbolos.get(id) != null) {
                 throw new SemanticError(id + " já declarado", token.getPosition());
             } else {
                 this.tabelaSimbolos.put(id, new Simbolo(id, token.getLexeme()));
@@ -334,12 +350,12 @@ public class Semantico implements Constants {
 
     private void acao127(Token token) throws SemanticError {
         for (String id : listaIdentificadores) {
-            if (this.tabelaSimbolos.contains(id)) {
+            if (this.tabelaSimbolos.get(id) != null) {
                 throw new SemanticError(id + " já declarado", token.getPosition());
             } else {
                 Simbolo s = new Simbolo(id);
                 this.tabelaSimbolos.put(id, s);
-                this.append(".locals (" + s.getTipo() + ")");
+                this.append(".locals(" + s.getTipo() + " " + id + ")");
             }
         }
         this.listaIdentificadores = new LinkedList<>();
@@ -351,7 +367,7 @@ public class Semantico implements Constants {
             this.append("dup");
         }
         for (String id : listaIdentificadores) {
-            if (tabelaSimbolos.contains(id)) {
+            if (tabelaSimbolos.get(id) != null) {
                 if (tipo.startsWith("_i")) {
                     this.append("conv.i8");
                 }
@@ -365,22 +381,22 @@ public class Semantico implements Constants {
 
     private void acao129(Token token) throws SemanticError {
         for (String id : listaIdentificadores) {
-            if (this.tabelaSimbolos.contains(id)) {
-                Simbolo s = this.tabelaSimbolos.get(id);
-                switch (s.getTipo()) {
-                    case "int64":
-                        this.append("ldc.i8 " + s.getValor());
-                        break;
-                    case "float64":
-                        this.append("ldc.r8 " + s.getValor());
-                        break;
-                    case "string":
-                        this.append("ldstr " + s.getValor());
-                        break;
-                    case "bool":
-                        this.append("ldc.i4." + s.getValorMaquina());
-                        break;
-                }
+            Simbolo s = this.tabelaSimbolos.get(id);
+            if (s != null) {
+                // switch (s.getTipo()) {
+                //     case "int64":
+                //         this.append("ldc.i8 " + s.getValor());
+                //         break;
+                //     case "float64":
+                //         this.append("ldc.r8 " + s.getValor());
+                //         break;
+                //     case "string":
+                //         this.append("ldstr " + s.getValor());
+                //         break;
+                //     case "bool":
+                //         this.append("ldc.i4." + s.getValorMaquina());
+                //         break;
+                // }
                 this.append("stloc " + id);
             } else {
                 throw new SemanticError(id + " não declarado", token.getPosition());
@@ -392,15 +408,20 @@ public class Semantico implements Constants {
     private void acao130(Token token) {
         this.append("ldstr " + token.getLexeme());
         this.append("call void [mscorlib]System.Console::Write(string)");
+        this.append("call string [mscorlib]System.Console::ReadLine()");
+        this.append("call int64 [mscorlib]System.Int64::Parse(string)");
     }
 
     // expressão
     private void acao131(Token token) throws SemanticError {
         String id = token.getLexeme();
-        if (this.tabelaSimbolos.contains(id)) {
-            Simbolo s = this.tabelaSimbolos.get(id);
+        Simbolo s = this.tabelaSimbolos.get(id);
+        if (s != null) {
             if (id.startsWith("_")) {
-                this.append("ldloc " + s.getValor());
+                this.append("ldloc " + s.getId());
+                if (s.getTipo().equals("int64")) {
+                    this.append("conv.r8");
+                } 
                 this.pilhaTipos.push(s.getTipo());
             } else {
                 switch (s.getTipo()) {

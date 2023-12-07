@@ -37,7 +37,6 @@ public class Sintatico implements Constants
         }
 
         int x = ((Integer)stack.pop()).intValue();
-        System.out.println(x - 70);
         int a = currentToken.getId();
 
         if (x == EPSILON)

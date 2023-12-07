@@ -46,7 +46,7 @@ public class Simbolo {
         return this.id;
     }
 
-    private String setTipo() {
+    private void setTipo() {
         if (id.startsWith("_i")) {
             this.tipo = "int64";
         } else if (id.startsWith("_f")) {
@@ -55,8 +55,9 @@ public class Simbolo {
             this.tipo =  "string";
         } else if (id.startsWith("_b")) {
             this.tipo =  "bool";
+        } else {
+            throw new IllegalArgumentException("Identificador " + id + " não possui um tipo válido");
         }
-        throw new IllegalArgumentException("Identificador " + id + " não possui um tipo válido");
     }
 
 }
