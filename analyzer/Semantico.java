@@ -319,7 +319,6 @@ public class Semantico implements Constants {
 
     private void acao125(String id) {
         this.listaIdentificadores.add(id);
-        pilhaTipos.push(new Simbolo(id).getTipo()); // ! TIRAR
     }
 
     private void acao126(Token token) throws SemanticError {
