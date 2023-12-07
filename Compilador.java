@@ -403,7 +403,13 @@ public class Compilador extends JFrame {
     }
 
     private void saveIlasm(String code) {
-        File file = new File(arqPath.replace("txt", "il"));
+        String name = arqPath;
+        if (name.endsWith(".txt")) {
+            name = name.replace("txt", "il");
+        } else {
+            name += ".il";
+        }
+        File file = new File(name);
         try {
             FileWriter writer = new FileWriter(file);
             writer.write(code);
