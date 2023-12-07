@@ -1,5 +1,3 @@
-package analyzer;
-
 import java.util.Stack;
 
 public class Sintatico implements Constants
@@ -37,7 +35,6 @@ public class Sintatico implements Constants
         }
 
         int x = ((Integer)stack.pop()).intValue();
-        System.out.println(x - 70);
         int a = currentToken.getId();
 
         if (x == EPSILON)
@@ -82,7 +79,7 @@ public class Sintatico implements Constants
         if (p >= 0)
         {
             int[] production = PRODUCTIONS[p];
-            //empilha a produ��o em ordem reversa
+            //empilha a produção em ordem reversa
             for (int i=production.length-1; i>=0; i--)
             {
                 stack.push(new Integer(production[i]));
@@ -106,9 +103,5 @@ public class Sintatico implements Constants
 
         while ( ! step() )
             ;
-    }
-
-    public Token getToken() {
-        return this.currentToken;
     }
 }

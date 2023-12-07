@@ -1,5 +1,3 @@
-package analyzer;
-
 public class Lexico implements Constants
 {
     private int position;

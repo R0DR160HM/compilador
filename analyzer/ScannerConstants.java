@@ -1,5 +1,3 @@
-package analyzer;
-
 public interface ScannerConstants
 {
     int[] SCANNER_TABLE_INDEXES = 
@@ -1287,13 +1285,10 @@ public interface ScannerConstants
 
     String[] SCANNER_ERROR =
     {
-        "{0} símbolo inválido",
+        "Caractere não esperado",
         "",
         "",
-        "constante_string inválida",
-        "",
-        "",
-        "",
+        "Erro identificando const_str",
         "",
         "",
         "",
@@ -1307,23 +1302,26 @@ public interface ScannerConstants
         "",
         "",
         "",
-        "comentário de bloco inválido ou não finalizado",
-        "{0} identificador inválido",
+        "",
+        "",
+        "",
+        "Erro identificando <ignorar>",
+        "Erro identificando id",
         "",
         "",
         "",
         "",
         "",
         "",
-        "constante_string inválida",
-        "constante_float inválida",
+        "Erro identificando const_str",
+        "Erro identificando const_float",
         "",
         "",
-        "{0} identificador inválido",
+        "Erro identificando id",
         "",
         "",
         "",
-        "constante_float inválida",
+        "Erro identificando const_float",
         "",
         "",
         "",
